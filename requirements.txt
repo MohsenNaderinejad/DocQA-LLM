@@ -7,3 +7,5 @@ django
 djangorestframework
 python-docx
 django-debug-toolbar
+psycopg2-binary
+pgvector
