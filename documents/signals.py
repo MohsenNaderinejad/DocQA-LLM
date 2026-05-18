@@ -1,4 +1,5 @@
-from django.db.models.signals import post_save
+import os
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from .models import Document, DocumentChunk
 from .processing import extract_text_from_docx, split_text_into_chunks
@@ -6,22 +7,39 @@ from .processing import extract_text_from_docx, split_text_into_chunks
 
 @receiver(post_save, sender=Document)
 def process_document(sender, instance, created, **kwargs):
-    """Trigger document processing on creation or file change."""
+    """
+    Automatically process documents when created or file is changed.
+    Extracts text and creates searchable chunks.
+    """
     if not instance.file:
         return
-    
-    # Process new documents
+
+    # Process new documents immediately
     if created:
         _do_processing(instance)
         return
-    
-    # Process if file was changed
-    try:
-        old_instance = Document.objects.get(pk=instance.pk)
-        if old_instance.file != instance.file:
-            _do_processing(instance)
-    except Document.DoesNotExist:
-        pass
+
+    # For existing documents, check if the file was changed
+    # _loaded_file_name was set in Document.from_db() when document was fetched
+    loaded_file_name = getattr(instance, '_loaded_file_name', None)
+    new_file_name = instance.file.name if instance.file else None
+
+    # Only reprocess if file was actually changed
+    if loaded_file_name != new_file_name:
+        _do_processing(instance)
+
+@receiver(post_delete, sender=Document)
+def delete_document_file(sender, instance, **kwargs):
+    """
+    Clean up the physical file when a Document record is deleted.
+    Prevents orphaned files from accumulating on the filesystem.
+    """
+    if instance.file:
+        file_path = instance.file.path
+        # Check if file exists before deleting to avoid errors
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+            print(f"### Deleted file: {file_path}")
 
 
 def _do_processing(instance):
