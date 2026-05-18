@@ -1,0 +1,9 @@
+langchain
+langchain-community
+langchain-openai
+openai
+python-dotenv
+django
+djangorestframework
+python-docx
+django-debug-toolbar
