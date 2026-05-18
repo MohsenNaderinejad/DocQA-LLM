@@ -8,7 +8,7 @@ from .processing import extract_text_from_docx, split_text_into_chunks
 @receiver(post_save, sender=Document)
 def process_document(sender, instance, created, **kwargs):
     """
-    Automatically process documents when created or file is changed.
+    Automatically process documents when created but not changed files due to relation between Document - DocumentChunk and QAHistory.
     Extracts text and creates searchable chunks.
     """
     if not instance.file:
@@ -18,15 +18,6 @@ def process_document(sender, instance, created, **kwargs):
     if created:
         _do_processing(instance)
         return
-
-    # For existing documents, check if the file was changed
-    # _loaded_file_name was set in Document.from_db() when document was fetched
-    loaded_file_name = getattr(instance, '_loaded_file_name', None)
-    new_file_name = instance.file.name if instance.file else None
-
-    # Only reprocess if file was actually changed
-    if loaded_file_name != new_file_name:
-        _do_processing(instance)
 
 @receiver(post_delete, sender=Document)
 def delete_document_file(sender, instance, **kwargs):
