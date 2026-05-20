@@ -12,7 +12,7 @@ def get_llm():
     return ChatOpenAI(
         openai_api_key=os.getenv('OPENROUTER_API_KEY'),
         openai_api_base="https://openrouter.ai/api/v1",
-        model_name=os.getenv('OPENROUTER_MODEL', 'google/gemma-4-31b-it:free'),
+        model_name=os.getenv('OPENROUTER_MODEL', 'nvidia/nemotron-3-super-120b-a12b:free'),
         temperature=0.1,  # Low temperature = more factual, less creative
         max_tokens=1000,  # Limit response length
         # OpenRouter tracking headers
