@@ -2,7 +2,7 @@ import os
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from .models import Document, DocumentChunk
-from .processing import extract_text_from_docx, split_text_into_chunks
+from .processing import extract_text_from_docx, split_text_into_chunks, generate_embeddings_for_document
 
 
 @receiver(post_save, sender=Document)
@@ -63,6 +63,8 @@ def _do_processing(instance):
         DocumentChunk.objects.bulk_create(chunk_objects)
         
         print(f"$$$ Processed '{instance.title}': {len(chunks)} chunks created")
+
+        generate_embeddings_for_document(instance)
         
     except Exception as e:
         print(f"!!! Error processing '{instance.title}': {e}")
