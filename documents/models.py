@@ -1,4 +1,5 @@
 from django.db import models
+from pgvector.django import VectorField
 
 
 class Document(models.Model):
@@ -26,6 +27,8 @@ class DocumentChunk(models.Model):
     content = models.TextField()
     # Order within the document (0, 1, 2, ...)
     chunk_index = models.IntegerField()
+    # Vector embedding for this chunk to use pgvector for efficient similarity search
+    embedding = VectorField(dimensions=384, null=True, blank=True)
 
     def __str__(self):
         return f"{self.document.title} — chunk {self.chunk_index}"
