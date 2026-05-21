@@ -9,3 +9,5 @@ python-docx
 django-debug-toolbar
 psycopg2-binary
 pgvector
+sentence-transformers
+numpy
