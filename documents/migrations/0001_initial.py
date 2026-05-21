@@ -2,6 +2,7 @@
 
 import django.db.models.deletion
 from django.db import migrations, models
+from pgvector.django import VectorField
 
 
 class Migration(migrations.Migration):
@@ -12,6 +13,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL("CREATE EXTENSION IF NOT EXISTS vector"),
         migrations.CreateModel(
             name='Document',
             fields=[
@@ -32,6 +34,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('content', models.TextField()),
                 ('chunk_index', models.IntegerField()),
+                ('embedding', VectorField(dimensions=384, null=True, blank=True)),
                 ('document', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='chunks', to='documents.document')),
             ],
             options={
