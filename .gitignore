@@ -221,4 +221,4 @@ instructions.txt
 *.pdf
 
 media/
-*.pyc
+*.pycvendor/
