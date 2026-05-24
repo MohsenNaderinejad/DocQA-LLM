@@ -303,16 +303,53 @@ It includes:
 
 ## Sample Data
 
-You should provide sample `.docx` files as part of submission (for testers).
+The repository includes a ready-to-use `sample_data/` folder with **10 `.docx` files**:
 
-Suggested approach:
-1. Create a folder like `sample_data/`
-2. Put 2–3 small `.docx` documents there (e.g., contract, policy, FAQ)
-3. Upload them using:
-   - Django Admin (`/admin/`) **or**
-   - `POST /api/documents/` endpoint
+- `sample_data/en_01_employee_handbook.docx`
+- `sample_data/en_02_rental_agreement.docx`
+- `sample_data/en_03_product_manual.docx`
+- `sample_data/en_04_university_regulations.docx`
+- `sample_data/en_05_project_requirements_docqa.docx`
+- `sample_data/en_06_customer_support_faq.docx`
+- `sample_data/fa_01_راهنمای_کارمند.docx`
+- `sample_data/fa_02_قرارداد_اجاره.docx`
+- `sample_data/fa_03_راهنمای_محصول.docx`
+- `sample_data/fa_04_سوالات_متداول.docx`
 
-If you add sample files, document them here with example commands (paths).
+Each sample document is intentionally long (at least 6000+ characters) for chunking/retrieval demonstrations.
+
+### Upload commands (run from repository root)
+
+```bash
+curl -X POST http://localhost:8000/api/documents/ -F "title=Employee Handbook" -F "file=@sample_data/en_01_employee_handbook.docx"
+curl -X POST http://localhost:8000/api/documents/ -F "title=Rental Agreement" -F "file=@sample_data/en_02_rental_agreement.docx"
+curl -X POST http://localhost:8000/api/documents/ -F "title=Product Manual" -F "file=@sample_data/en_03_product_manual.docx"
+curl -X POST http://localhost:8000/api/documents/ -F "title=University Regulations" -F "file=@sample_data/en_04_university_regulations.docx"
+curl -X POST http://localhost:8000/api/documents/ -F "title=DocQA Project Requirements" -F "file=@sample_data/en_05_project_requirements_docqa.docx"
+curl -X POST http://localhost:8000/api/documents/ -F "title=Customer Support FAQ" -F "file=@sample_data/en_06_customer_support_faq.docx"
+curl -X POST http://localhost:8000/api/documents/ -F "title=راهنمای کارمند" -F "file=@sample_data/fa_01_راهنمای_کارمند.docx"
+curl -X POST http://localhost:8000/api/documents/ -F "title=قرارداد اجاره" -F "file=@sample_data/fa_02_قرارداد_اجاره.docx"
+curl -X POST http://localhost:8000/api/documents/ -F "title=راهنمای محصول" -F "file=@sample_data/fa_03_راهنمای_محصول.docx"
+curl -X POST http://localhost:8000/api/documents/ -F "title=سوالات متداول" -F "file=@sample_data/fa_04_سوالات_متداول.docx"
+```
+
+### Processing note
+
+After each upload, wait for background processing (text extraction, chunking, and embedding generation) to complete before asking questions.  
+If needed, monitor logs:
+
+```bash
+docker compose logs -f web
+```
+
+### Optional quick test questions
+
+- “What is the monthly payroll date in the employee handbook?”
+- “How much is the security deposit in the rental agreement?”
+- “What is the first response SLA for priority support tickets?”
+- «ساعت کاری عادی در راهنمای کارمند چیست؟»
+- «در قرارداد اجاره، مبلغ ودیعه چقدر است؟»
+- «در سوالات متداول، زمان پاسخ اولیه برای تیکت فوری چقدر است؟»
 
 ---
 
@@ -671,17 +708,53 @@ curl http://localhost:8000/api/history/
 
 ## داده نمونه
 
-برای تحویل پروژه بهتر است چند فایل `.docx` نمونه برای تست قرار دهید.
+در این مخزن پوشه‌ی آماده‌ی `sample_data/` با **۱۰ فایل `.docx`** وجود دارد:
 
-پیشنهاد:
-1. یک پوشه مثل `sample_data/` بسازید
-2. ۲ تا ۳ فایل `.docx` کوچک داخلش بگذارید (مثلاً قرارداد، سیاست‌ها، FAQ)
-3. فایل‌ها را یا با:
-   - Django Admin (`/admin/`) **یا**
-   - endpoint `POST /api/documents/`
-   آپلود کنید.
+- `sample_data/en_01_employee_handbook.docx`
+- `sample_data/en_02_rental_agreement.docx`
+- `sample_data/en_03_product_manual.docx`
+- `sample_data/en_04_university_regulations.docx`
+- `sample_data/en_05_project_requirements_docqa.docx`
+- `sample_data/en_06_customer_support_faq.docx`
+- `sample_data/fa_01_راهنمای_کارمند.docx`
+- `sample_data/fa_02_قرارداد_اجاره.docx`
+- `sample_data/fa_03_راهنمای_محصول.docx`
+- `sample_data/fa_04_سوالات_متداول.docx`
 
-اگر فایل نمونه اضافه کردید، این بخش را با مسیر دقیق فایل‌ها و مثال آپلود تکمیل کنید.
+هر فایل عمداً طولانی (حداقل بیش از ۶۰۰۰ کاراکتر) تهیه شده تا برای نمایش chunking و retrieval مناسب باشد.
+
+### دستورات آپلود (از ریشه‌ی مخزن اجرا شود)
+
+```bash
+curl -X POST http://localhost:8000/api/documents/ -F "title=Employee Handbook" -F "file=@sample_data/en_01_employee_handbook.docx"
+curl -X POST http://localhost:8000/api/documents/ -F "title=Rental Agreement" -F "file=@sample_data/en_02_rental_agreement.docx"
+curl -X POST http://localhost:8000/api/documents/ -F "title=Product Manual" -F "file=@sample_data/en_03_product_manual.docx"
+curl -X POST http://localhost:8000/api/documents/ -F "title=University Regulations" -F "file=@sample_data/en_04_university_regulations.docx"
+curl -X POST http://localhost:8000/api/documents/ -F "title=DocQA Project Requirements" -F "file=@sample_data/en_05_project_requirements_docqa.docx"
+curl -X POST http://localhost:8000/api/documents/ -F "title=Customer Support FAQ" -F "file=@sample_data/en_06_customer_support_faq.docx"
+curl -X POST http://localhost:8000/api/documents/ -F "title=راهنمای کارمند" -F "file=@sample_data/fa_01_راهنمای_کارمند.docx"
+curl -X POST http://localhost:8000/api/documents/ -F "title=قرارداد اجاره" -F "file=@sample_data/fa_02_قرارداد_اجاره.docx"
+curl -X POST http://localhost:8000/api/documents/ -F "title=راهنمای محصول" -F "file=@sample_data/fa_03_راهنمای_محصول.docx"
+curl -X POST http://localhost:8000/api/documents/ -F "title=سوالات متداول" -F "file=@sample_data/fa_04_سوالات_متداول.docx"
+```
+
+### نکته پردازش
+
+بعد از هر آپلود، کمی صبر کنید تا استخراج متن، چانک‌بندی و ساخت embedding کامل شود؛ سپس سوال بپرسید.  
+در صورت نیاز لاگ‌ها را بررسی کنید:
+
+```bash
+docker compose logs -f web
+```
+
+### سوال‌های کوتاه پیشنهادی برای تست
+
+- “What is the monthly payroll date in the employee handbook?”
+- “How much is the security deposit in the rental agreement?”
+- “What is the first response SLA for priority support tickets?”
+- «ساعت کاری عادی در راهنمای کارمند چیست؟»
+- «در قرارداد اجاره، مبلغ ودیعه چقدر است؟»
+- «در سوالات متداول، زمان پاسخ اولیه برای تیکت فوری چقدر است؟»
 
 ---
 
