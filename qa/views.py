@@ -3,14 +3,15 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import QAHistory
 from .pipeline import ask_question
+from .serializers import QAHistorySerializer
 
 
 @api_view(['POST'])
 def ask(request):
     """
     POST /api/ask/
-    Body: {"question": "What is the contract duration?"}
-    Returns: {"answer": "...", "question": "...", "id": 1}
+    Body: {"question": "your question here"}
+    Returns the generated answer with source documents.
     """
     question = request.data.get('question', '').strip()
     
@@ -29,15 +30,9 @@ def ask(request):
             answer=result['answer']
         )
         qa_entry.source_documents.set(result['source_documents'])
-        qa_entry.save()
-        
-        return Response({
-            'id': qa_entry.id,
-            'question': question,
-            'answer': result['answer'],
-            'sources': [doc.title for doc in result['source_documents']],
-            'chunks_used': result['chunks_used']
-        })
+
+        serializer = QAHistorySerializer(qa_entry)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
         
     except Exception as e:
         return Response(
@@ -50,17 +45,8 @@ def ask(request):
 def history(request):
     """
     GET /api/history/
-    Returns list of all past questions and answers.
+    Returns the last 20 questions and answers.
     """
-    entries = QAHistory.objects.all()[:20]  # last 20
-    data = [
-        {
-            'id': e.id,
-            'question': e.question,
-            'answer': e.answer,
-            'created_at': e.created_at,
-            'sources': [doc.title for doc in e.source_documents.all()]
-        }
-        for e in entries
-    ]
-    return Response(data)
+    entries = QAHistory.objects.all()[:20]
+    serializer = QAHistorySerializer(entries, many=True)
+    return Response(serializer.data)
