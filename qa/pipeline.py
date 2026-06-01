@@ -5,11 +5,16 @@ from sentence_transformers import SentenceTransformer
 from documents.models import DocumentChunk
 from pgvector.django import CosineDistance
 
-_embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+_embedding_model = None
+
+def get_embedding_model():
+    global _embedding_model
+    if _embedding_model is None:
+        _embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+    return _embedding_model
 
 def embed_text(text: str) -> list:
-    """Converts a string into a 384-dimensional vector."""
-    return _embedding_model.encode(text).tolist()
+    return get_embedding_model().encode(text).tolist()
 
 def get_llm():
     """
